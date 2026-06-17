@@ -1,1 +1,257 @@
-Hello World
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surya Sai Teja Desu | Personal Portfolios</title>
+    <!-- Tailwind CSS for Modern Styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cyberDark: '#0B0F19',
+                        cyberCard: '#151D30',
+                        cyberNeon: '#00F0FF',
+                        cyberAccent: '#8A2BE2'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .glass { background: rgba(21, 29, 48, 0.7); backdrop-filter: blur(10px); }
+    </style>
+</head>
+<body class="bg-cyberDark text-slate-200 font-sans min-h-screen selection:bg-cyberNeon selection:text-black">
+
+    <!-- Top Glow Header -->
+    <header class="border-b border-slate-800 sticky top-0 z-50 glass">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="h-3 w-3 rounded-full bg-cyberNeon animate-pulse"></div>
+                <span class="font-mono text-xl font-bold tracking-wider text-white">SURYA_DESU //</span>
+            </div>
+            
+            <!-- Tab Navigation Buttons -->
+            <nav class="flex flex-wrap justify-center gap-2 font-mono text-sm">
+                <button onclick="switchTab('about')" id="btn-about" class="tab-btn px-4 py-2 rounded-md transition-all duration-300 text-cyberNeon border border-cyberNeon/30 bg-cyberNeon/10">About</button>
+                <button onclick="switchTab('research')" id="btn-research" class="tab-btn px-4 py-2 rounded-md transition-all duration-300 hover:text-white hover:bg-slate-800">Research</button>
+                <button onclick="switchTab('projects')" id="btn-projects" class="tab-btn px-4 py-2 rounded-md transition-all duration-300 hover:text-white hover:bg-slate-800">Projects</button>
+                <button onclick="switchTab('gallery')" id="btn-gallery" class="tab-btn px-4 py-2 rounded-md transition-all duration-300 hover:text-white hover:bg-slate-800">Gallery</button>
+                <button onclick="switchTab('gaming')" id="btn-gaming" class="tab-btn px-4 py-2 rounded-md transition-all duration-300 hover:text-white hover:bg-slate-800">Gaming</button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-6 py-12">
+        
+        <!-- ================= TAB 1: ABOUT ================= -->
+        <section id="about" class="tab-content active space-y-12 animate-fadeIn">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
+                <div class="md:col-span-2 space-y-4">
+                    <h1 class="text-4xl md:text-6xl font-black tracking-tight text-white">
+                        Surya Sai Teja Desu
+                    </h1>
+                    <p class="text-xl text-cyberNeon font-mono">Quantum Computing Researcher & Systems Engineer</p>
+                    <p class="text-slate-400 leading-relaxed text-lg">
+                        Operating at the convergent boundaries of quantum information theory, formal software verification, and scalable machine learning frameworks. Bridging pure academic rigor with real-world technological infrastructure.
+                    </p>
+                    <div class="flex gap-4 pt-2">
+                        <a href="mailto:desusurya.work@gmail.com" class="text-sm font-mono text-slate-400 hover:text-cyberNeon transition">&gt;_ Email</a>
+                        <a href="#" class="text-sm font-mono text-slate-400 hover:text-cyberNeon transition">&gt;_ GitHub</a>
+                        <a href="#" class="text-sm font-mono text-slate-400 hover:text-cyberNeon transition">&gt;_ LinkedIn</a>
+                    </div>
+                </div>
+                <div class="flex justify-center">
+                    <div class="relative group">
+                        <div class="absolute -inset-1 bg-gradient-to-r from-cyberNeon to-cyberAccent rounded-xl blur opacity-40 group-hover:opacity-70 transition duration-1000"></div>
+                        <div class="relative w-64 h-64 rounded-xl bg-cyberCard border border-slate-700 overflow-hidden flex items-center justify-center">
+                            <!-- Placeholder Image / Add profile photo asset here -->
+                            <span class="text-slate-500 font-mono text-xs">[ Profile Photo Placeholder ]</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Education Quick View -->
+            <div class="border border-slate-800 rounded-xl p-6 bg-cyberCard/40">
+                <h3 class="text-xl font-bold font-mono text-white mb-4">&gt; Education & Laurels</h3>
+                <div class="space-y-4">
+                    <div class="flex flex-col sm:flex-row justify-between sm:items-center border-b border-slate-800 pb-2">
+                        <div>
+                            <span class="font-bold text-slate-200">IIT Hyderabad</span> — Dual Degree (B.Tech Honors + M.Tech) in Computer Science & Engineering
+                        </div>
+                        <span class="text-cyberNeon font-mono text-sm">CGPA: 9.17 / 10</span>
+                    </div>
+                    <p class="text-sm text-slate-400">Recipient of the Kesav Nori Research Excellence Award and multiple Academic Excellence honors.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= TAB 2: RESEARCH ================= -->
+        <section id="research" class="tab-content space-y-8">
+            <h2 class="text-3xl font-extrabold text-white tracking-tight font-mono">&gt;_ Lit Review & Opinions</h2>
+            <p class="text-slate-400 max-w-2xl">A curated space analyzing foundational peer-reviewed articles alongside internal critical analysis and technical positions.</p>
+            
+            <div class="grid grid-cols-1 gap-6">
+                <!-- Paper 1 -->
+                <div class="border border-slate-800 rounded-xl p-6 bg-cyberCard hover:border-slate-700 transition">
+                    <span class="text-xs font-mono px-2 py-1 rounded bg-cyberAccent/20 text-purple-300">FORMATS</span>
+                    <h3 class="text-xl font-bold text-white mt-2">Model Checking for Entanglement Swapping</h3>
+                    <p class="text-sm text-slate-400 italic mt-1">Desu, S. S. T., Srivastava, A., & Rao, M. P.</p>
+                    <div class="mt-4 p-4 rounded bg-cyberDark/60 border-l-2 border-cyberNeon">
+                        <span class="text-xs font-mono text-cyberNeon uppercase block tracking-wider font-bold">My Commentary / Takeaway:</span>
+                        <p class="text-slate-300 text-sm mt-1 leading-relaxed">
+                            This framework introduces Probabilistic Timed Automata (PTA) to model noisy, time-critical quantum repeater actions. Transitioning to PRISM's digital clocks engine dramatically cuts down the computational state-space growth, effectively proving that verification methodologies can proactively troubleshoot real-world discrete quantum network components before physical deployment.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Paper 2 -->
+                <div class="border border-slate-800 rounded-xl p-6 bg-cyberCard hover:border-slate-700 transition">
+                    <span class="text-xs font-mono px-2 py-1 rounded bg-cyberAccent/20 text-purple-300">ICCS</span>
+                    <h3 class="text-xl font-bold text-white mt-2">Adiabatic Quantum Feature Selection for Sparse Linear Regression</h3>
+                    <p class="text-sm text-slate-400 italic mt-1">Desu, S. S. T., Srijith, P. K., Rao, M. P., & Sivadasan, N.</p>
+                    <div class="mt-4 p-4 rounded bg-cyberDark/60 border-l-2 border-cyberNeon">
+                        <span class="text-xs font-mono text-cyberNeon uppercase block tracking-wider font-bold">My Commentary / Takeaway:</span>
+                        <p class="text-slate-300 text-sm mt-1 leading-relaxed">
+                            A solid optimization benchmark leveraging quantum annealers for massive feature reduction workloads. The key here is the structural conversion of algorithmic penalties into explicit quadratic unconstrained binary optimization (QUBO) topologies—showing immediate functional value on near-term NISQ arrays.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= TAB 3: PROJECTS ================= -->
+        <section id="projects" class="tab-content space-y-8">
+            <h2 class="text-3xl font-extrabold text-white tracking-tight font-mono">&gt;_ Core Engineering Builds</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Project Card 1 -->
+                <div class="border border-slate-800 bg-cyberCard/50 p-6 rounded-xl flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-xl font-bold text-white">Hybrid Quantum-Classical Scale Framework</h3>
+                        <p class="text-sm text-slate-400 mt-2 leading-relaxed">
+                            Architected an enterprise optimization platform routing workflows across classical data layers and noise-constrained quantum processors. Scaled operation capabilities from 100 to over 1 Million variables within single-year target boundaries.
+                        </p>
+                    </div>
+                    <div class="mt-6 flex flex-wrap gap-2 text-xs font-mono text-cyberNeon">
+                        <span class="bg-slate-800 px-2 py-1 rounded">Qiskit</span>
+                        <span class="bg-slate-800 px-2 py-1 rounded">Python</span>
+                        <span class="bg-slate-800 px-2 py-1 rounded">Docker</span>
+                    </div>
+                </div>
+
+                <!-- Project Card 2 -->
+                <div class="border border-slate-800 bg-cyberCard/50 p-6 rounded-xl flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-xl font-bold text-white">Inexact Qubit Mapping Optimization Compiler</h3>
+                        <p class="text-sm text-slate-400 mt-2 leading-relaxed">
+                            Developed a satisficing physical-to-logical compilation routing architecture. Systematically identifies non-critical paths in large quantum algorithms to relax routing constraints, lowering required physical qubit ceilings.
+                        </p>
+                    </div>
+                    <div class="mt-6 flex flex-wrap gap-2 text-xs font-mono text-cyberNeon">
+                        <span class="bg-slate-800 px-2 py-1 rounded">Graph Theory</span>
+                        <span class="bg-slate-800 px-2 py-1 rounded">Compilers</span>
+                        <span class="bg-slate-800 px-2 py-1 rounded">C++</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= TAB 4: GALLERY ================= -->
+        <section id="gallery" class="tab-content space-y-8">
+            <h2 class="text-3xl font-extrabold text-white tracking-tight font-mono">&gt;_ Visual Log</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                <!-- Image Placeholders -->
+                <div class="aspect-square bg-cyberCard border border-slate-800 rounded-xl flex items-center justify-center p-4 group hover:border-slate-700 transition">
+                    <span class="text-slate-500 text-sm font-mono">[ Research Conference Presentation ]</span>
+                </div>
+                <div class="aspect-square bg-cyberCard border border-slate-800 rounded-xl flex items-center justify-center p-4 group hover:border-slate-700 transition">
+                    <span class="text-slate-500 text-sm font-mono">[ Lab Benchmark Graph Output ]</span>
+                </div>
+                <div class="aspect-square bg-cyberCard border border-slate-800 rounded-xl flex items-center justify-center p-4 group hover:border-slate-700 transition">
+                    <span class="text-slate-500 text-sm font-mono">[ Team R&D Hackathon Frame ]</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= TAB 5: GAMING ================= -->
+        <section id="gaming" class="tab-content space-y-8">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                    <h2 class="text-3xl font-extrabold text-white tracking-tight font-mono">&gt;_ Rec Room // Competitive Clips</h2>
+                    <p class="text-slate-400 text-sm mt-1">Decompressing with low-latency tactical FPS plays and competitive mechanical highlights.</p>
+                </div>
+                <span class="bg-red-500/10 text-red-400 text-xs uppercase px-3 py-1 rounded-full border border-red-500/20 font-mono tracking-wider">VALORANT // RADIANTE_TRACKS</span>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Clip Wrapper 1 -->
+                <div class="border border-slate-800 bg-cyberCard rounded-xl overflow-hidden shadow-2xl">
+                    <div class="aspect-video bg-black flex items-center justify-center relative">
+                        <!-- Replace 'src' with raw stream link or iframe embed code -->
+                        <video controls class="w-full h-full object-cover">
+                            <source src="your-clip-url.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        <!-- Stand-in message if file paths are local -->
+                        <div class="absolute inset-0 flex items-center justify-center pointer-events-none bg-slate-900/40">
+                            <span class="text-xs font-mono text-slate-400 bg-black/80 px-3 py-1.5 rounded">Bind // Ace Clutch Clip Entry</span>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <h4 class="font-bold text-white text-base">Clutch Defensive Hold (Jett - Matchpoint)</h4>
+                        <p class="text-xs text-slate-400 mt-1 font-mono">Rank: Immortal Lobby // Variable Eco Round Execution</p>
+                    </div>
+                </div>
+
+                <!-- Clip Wrapper 2 -->
+                <div class="border border-slate-800 bg-cyberCard rounded-xl overflow-hidden shadow-2xl">
+                    <div class="aspect-video bg-black flex items-center justify-center relative">
+                        <video controls class="w-full h-full object-cover">
+                            <source src="your-clip-2-url.mp4" type="video/mp4">
+                        </video>
+                        <div class="absolute inset-0 flex items-center justify-center pointer-events-none bg-slate-900/40">
+                            <span class="text-xs font-mono text-slate-400 bg-black/80 px-3 py-1.5 rounded">Haven // Site Retake Entry</span>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <h4 class="font-bold text-white text-base">Perfect Retake Alignment (Omen Flank Control)</h4>
+                        <p class="text-xs text-slate-400 mt-1 font-mono">Rank: Immortal Lobby // Crosshair Placement Highlight</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Simple, Bulletproof Tab Router JavaScript -->
+    <script>
+        function switchTab(tabId) {
+            // Hide all tab contents
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => content.classList.remove('active'));
+
+            // Remove active styling from all buttons
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('text-cyberNeon', 'border', 'border-cyberNeon/30', 'bg-cyberNeon/10');
+                btn.classList.add('hover:text-white', 'hover:bg-slate-800');
+            });
+
+            // Activate chosen tab content
+            document.getElementById(tabId).classList.add('active');
+
+            // Apply active styles to active button
+            const activeBtn = document.getElementById('btn-' + tabId);
+            activeBtn.classList.remove('hover:text-white', 'hover:bg-slate-800');
+            activeBtn.classList.add('text-cyberNeon', 'border', 'border-cyberNeon/30', 'bg-cyberNeon/10');
+        }
+    </script>
+</body>
+</html>
