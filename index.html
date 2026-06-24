@@ -1,257 +1,641 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Surya Sai Teja Desu | Personal Portfolios</title>
-    <!-- Tailwind CSS for Modern Styling -->
+    <title>Surya Sai Teja Desu | Cosmic Portfolio</title>
+    <meta name="description" content="Surya Sai Teja Desu — Quantum Computing Researcher & Systems Engineer.">
+
+    <!-- Tailwind for layout utilities -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        cyberDark: '#0B0F19',
-                        cyberCard: '#151D30',
-                        cyberNeon: '#00F0FF',
-                        cyberAccent: '#8A2BE2'
-                    }
-                }
-            }
-        }
+        tailwind.config = { darkMode: 'class' };
     </script>
+
+    <!-- Three.js (ES module) for the interactive 3D galaxy -->
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+        }
+    }
+    </script>
+
     <style>
+        /* ---------- Theme tokens ---------- */
+        :root {
+            --bg-0: #05030d;
+            --bg-1: #0d0824;
+            --bg-2: #1a0f3d;
+            --text-1: #f2effb;
+            --text-2: #a99fce;
+            --text-3: #6f679a;
+            --accent: #a855f7;   /* galaxy violet */
+            --accent-2: #38bdf8;  /* cosmic cyan  */
+            --accent-3: #f472b6;  /* nebula pink  */
+            --card-bg: rgba(20, 14, 46, 0.55);
+            --card-bg-solid: rgba(20, 14, 46, 0.78);
+            --card-border: rgba(168, 85, 247, 0.22);
+            --card-border-hover: rgba(168, 85, 247, 0.6);
+            --header-bg: rgba(8, 5, 22, 0.55);
+            --chip-bg: rgba(168, 85, 247, 0.12);
+            --glow: 0 0 40px rgba(168, 85, 247, 0.25);
+            --scroll-thumb: #6d28d9;
+        }
+        html.light {
+            --bg-0: #eef0ff;
+            --bg-1: #e3e6ff;
+            --bg-2: #d7ddff;
+            --text-1: #160f33;
+            --text-2: #4a4470;
+            --text-3: #7a749a;
+            --accent: #7c3aed;
+            --accent-2: #0891b2;
+            --accent-3: #db2777;
+            --card-bg: rgba(255, 255, 255, 0.62);
+            --card-bg-solid: rgba(255, 255, 255, 0.82);
+            --card-border: rgba(124, 58, 237, 0.2);
+            --card-border-hover: rgba(124, 58, 237, 0.5);
+            --header-bg: rgba(255, 255, 255, 0.6);
+            --chip-bg: rgba(124, 58, 237, 0.1);
+            --glow: 0 0 40px rgba(124, 58, 237, 0.18);
+            --scroll-thumb: #a78bfa;
+        }
+
+        * { -webkit-tap-highlight-color: transparent; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            color: var(--text-1);
+            font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+            background:
+                radial-gradient(120% 90% at 50% -10%, var(--bg-2) 0%, var(--bg-1) 38%, var(--bg-0) 78%);
+            background-attachment: fixed;
+            transition: color .5s ease, background .8s ease;
+            overflow-x: hidden;
+        }
+
+        .font-mono { font-family: ui-monospace, "SF Mono", "Fira Code", Menlo, monospace; }
+
+        /* ---------- 3D canvas ---------- */
+        #bg-canvas {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+        #content { position: relative; z-index: 1; }
+
+        /* soft vignette to seat content over the galaxy */
+        #vignette {
+            position: fixed; inset: 0; z-index: 0; pointer-events: none;
+            background: radial-gradient(115% 80% at 50% 40%, transparent 55%, var(--bg-0) 130%);
+            opacity: .9;
+            transition: background .8s ease;
+        }
+
+        /* ---------- Theme-aware components ---------- */
+        .txt-1 { color: var(--text-1); }
+        .txt-2 { color: var(--text-2); }
+        .txt-3 { color: var(--text-3); }
+        .accent { color: var(--accent); }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 1rem;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            transition: border-color .35s ease, transform .35s ease, box-shadow .35s ease, background .8s ease;
+        }
+        .card:hover {
+            border-color: var(--card-border-hover);
+            box-shadow: var(--glow);
+        }
+        .card-solid { background: var(--card-bg-solid); }
+
+        .chip {
+            background: var(--chip-bg);
+            border: 1px solid var(--card-border);
+            color: var(--accent);
+            border-radius: .5rem;
+            padding: .2rem .55rem;
+            font-size: .72rem;
+        }
+
+        .gradient-text {
+            background: linear-gradient(110deg, var(--accent-3), var(--accent) 45%, var(--accent-2));
+            background-size: 220% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: shimmer 7s linear infinite;
+        }
+        @keyframes shimmer { to { background-position: 220% center; } }
+
+        .link-mono {
+            color: var(--text-2);
+            font-size: .85rem;
+            transition: color .25s ease, text-shadow .25s ease;
+        }
+        .link-mono:hover { color: var(--accent); text-shadow: 0 0 10px var(--accent); }
+
+        /* ---------- Header / nav ---------- */
+        .glass-header {
+            background: var(--header-bg);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--card-border);
+            transition: background .8s ease, border-color .8s ease;
+        }
+        .tab-btn {
+            color: var(--text-2);
+            border: 1px solid transparent;
+            border-radius: .5rem;
+            padding: .5rem 1rem;
+            transition: all .3s ease;
+            cursor: pointer;
+            background: transparent;
+        }
+        .tab-btn:hover { color: var(--text-1); }
+        .tab-btn.active {
+            color: var(--accent);
+            border-color: var(--card-border-hover);
+            background: var(--chip-bg);
+            box-shadow: 0 0 18px -4px var(--accent);
+        }
+
+        .theme-toggle {
+            display: grid; place-items: center;
+            width: 2.4rem; height: 2.4rem;
+            border-radius: 9999px;
+            border: 1px solid var(--card-border);
+            background: var(--chip-bg);
+            color: var(--accent);
+            cursor: pointer;
+            transition: transform .4s ease, box-shadow .3s ease, border-color .3s ease;
+        }
+        .theme-toggle:hover { transform: rotate(25deg) scale(1.08); box-shadow: var(--glow); border-color: var(--card-border-hover); }
+        .theme-toggle svg { width: 1.15rem; height: 1.15rem; }
+        .icon-sun { display: none; }
+        html.light .icon-sun { display: block; }
+        html.light .icon-moon { display: none; }
+
+        /* ---------- Tabs ---------- */
         .tab-content { display: none; }
-        .tab-content.active { display: block; }
-        .glass { background: rgba(21, 29, 48, 0.7); backdrop-filter: blur(10px); }
+        .tab-content.active { display: block; animation: fadeUp .6s cubic-bezier(.2,.7,.2,1); }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(22px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .pulse-dot {
+            width: .7rem; height: .7rem; border-radius: 9999px;
+            background: var(--accent-2);
+            box-shadow: 0 0 12px var(--accent-2);
+            animation: pulse 2s ease-in-out infinite;
+        }
+        @keyframes pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: .4; transform: scale(.8); } }
+
+        /* ---------- Profile orb / tilt card ---------- */
+        .tilt-wrap { perspective: 900px; }
+        .tilt-card { transition: transform .15s ease-out; transform-style: preserve-3d; }
+        .orb-glow {
+            position: absolute; inset: -2px; border-radius: 1.1rem;
+            background: conic-gradient(from 0deg, var(--accent-3), var(--accent), var(--accent-2), var(--accent-3));
+            filter: blur(16px); opacity: .55;
+            animation: spin 9s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .divider { border-color: var(--card-border); }
+
+        /* ---------- Scrollbar ---------- */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: 9999px; border: 2px solid transparent; background-clip: padding-box; }
+
+        ::selection { background: var(--accent); color: #fff; }
     </style>
 </head>
-<body class="bg-cyberDark text-slate-200 font-sans min-h-screen selection:bg-cyberNeon selection:text-black">
+<body>
+    <!-- Interactive 3D galaxy -->
+    <canvas id="bg-canvas"></canvas>
+    <div id="vignette"></div>
 
-    <!-- Top Glow Header -->
-    <header class="border-b border-slate-800 sticky top-0 z-50 glass">
-        <div class="max-w-6xl mx-auto px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
-            <div class="flex items-center gap-3">
-                <div class="h-3 w-3 rounded-full bg-cyberNeon animate-pulse"></div>
-                <span class="font-mono text-xl font-bold tracking-wider text-white">SURYA_DESU //</span>
-            </div>
-            
-            <!-- Tab Navigation Buttons -->
-            <nav class="flex flex-wrap justify-center gap-2 font-mono text-sm">
-                <button onclick="switchTab('about')" id="btn-about" class="tab-btn px-4 py-2 rounded-md transition-all duration-300 text-cyberNeon border border-cyberNeon/30 bg-cyberNeon/10">About</button>
-                <button onclick="switchTab('research')" id="btn-research" class="tab-btn px-4 py-2 rounded-md transition-all duration-300 hover:text-white hover:bg-slate-800">Research</button>
-                <button onclick="switchTab('projects')" id="btn-projects" class="tab-btn px-4 py-2 rounded-md transition-all duration-300 hover:text-white hover:bg-slate-800">Projects</button>
-                <button onclick="switchTab('gallery')" id="btn-gallery" class="tab-btn px-4 py-2 rounded-md transition-all duration-300 hover:text-white hover:bg-slate-800">Gallery</button>
-                <button onclick="switchTab('gaming')" id="btn-gaming" class="tab-btn px-4 py-2 rounded-md transition-all duration-300 hover:text-white hover:bg-slate-800">Gaming</button>
-            </nav>
-        </div>
-    </header>
-
-    <main class="max-w-6xl mx-auto px-6 py-12">
-        
-        <!-- ================= TAB 1: ABOUT ================= -->
-        <section id="about" class="tab-content active space-y-12 animate-fadeIn">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
-                <div class="md:col-span-2 space-y-4">
-                    <h1 class="text-4xl md:text-6xl font-black tracking-tight text-white">
-                        Surya Sai Teja Desu
-                    </h1>
-                    <p class="text-xl text-cyberNeon font-mono">Quantum Computing Researcher & Systems Engineer</p>
-                    <p class="text-slate-400 leading-relaxed text-lg">
-                        Operating at the convergent boundaries of quantum information theory, formal software verification, and scalable machine learning frameworks. Bridging pure academic rigor with real-world technological infrastructure.
-                    </p>
-                    <div class="flex gap-4 pt-2">
-                        <a href="mailto:desusurya.work@gmail.com" class="text-sm font-mono text-slate-400 hover:text-cyberNeon transition">&gt;_ Email</a>
-                        <a href="#" class="text-sm font-mono text-slate-400 hover:text-cyberNeon transition">&gt;_ GitHub</a>
-                        <a href="#" class="text-sm font-mono text-slate-400 hover:text-cyberNeon transition">&gt;_ LinkedIn</a>
-                    </div>
+    <div id="content">
+        <!-- ================= HEADER ================= -->
+        <header class="sticky top-0 z-50 glass-header">
+            <div class="max-w-6xl mx-auto px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+                <div class="flex items-center gap-3">
+                    <span class="pulse-dot"></span>
+                    <span class="font-mono text-xl font-bold tracking-wider txt-1">SURYA_DESU<span class="accent"> //</span></span>
                 </div>
-                <div class="flex justify-center">
-                    <div class="relative group">
-                        <div class="absolute -inset-1 bg-gradient-to-r from-cyberNeon to-cyberAccent rounded-xl blur opacity-40 group-hover:opacity-70 transition duration-1000"></div>
-                        <div class="relative w-64 h-64 rounded-xl bg-cyberCard border border-slate-700 overflow-hidden flex items-center justify-center">
-                            <!-- Placeholder Image / Add profile photo asset here -->
-                            <span class="text-slate-500 font-mono text-xs">[ Profile Photo Placeholder ]</span>
+
+                <div class="flex items-center gap-3">
+                    <nav class="flex flex-wrap justify-center gap-1.5 font-mono text-sm">
+                        <button data-tab="about"    class="tab-btn active">About</button>
+                        <button data-tab="research" class="tab-btn">Research</button>
+                        <button data-tab="projects" class="tab-btn">Projects</button>
+                        <button data-tab="gallery"  class="tab-btn">Gallery</button>
+                        <button data-tab="gaming"   class="tab-btn">Gaming</button>
+                    </nav>
+
+                    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark / light mode" title="Toggle theme">
+                        <!-- moon (shown in dark) -->
+                        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                        </svg>
+                        <!-- sun (shown in light) -->
+                        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="4.5"/>
+                            <path d="M12 2v2.5M12 19.5V22M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2 12h2.5M19.5 12H22M4.2 19.8 6 18M18 6l1.8-1.8"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main class="max-w-6xl mx-auto px-6 py-12">
+
+            <!-- ================= TAB 1: ABOUT ================= -->
+            <section id="about" class="tab-content active space-y-12">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-10 items-center">
+                    <div class="md:col-span-2 space-y-5">
+                        <p class="font-mono text-sm accent tracking-widest uppercase">// Welcome to my corner of the universe</p>
+                        <h1 class="text-4xl md:text-6xl font-black tracking-tight gradient-text leading-tight">
+                            Surya Sai Teja Desu
+                        </h1>
+                        <p class="text-xl font-mono txt-2">Quantum Computing Researcher &amp; Systems Engineer</p>
+                        <p class="txt-2 leading-relaxed text-lg">
+                            Operating at the convergent boundaries of quantum information theory, formal software verification, and scalable machine learning frameworks. Bridging pure academic rigor with real-world technological infrastructure.
+                        </p>
+                        <div class="flex flex-wrap gap-5 pt-2 font-mono">
+                            <a href="mailto:desusurya.work@gmail.com" class="link-mono">&gt;_ Email</a>
+                            <a href="https://github.com/suryadesu/" target="_blank" rel="noopener noreferrer" class="link-mono">&gt;_ GitHub</a>
+                            <a href="https://www.linkedin.com/in/surya-sai-teja/" target="_blank" rel="noopener noreferrer" class="link-mono">&gt;_ LinkedIn</a>
+                            <a href="https://scholar.google.com/citations?user=das7IggAAAAJ&amp;hl=en" target="_blank" rel="noopener noreferrer" class="link-mono">&gt;_ Scholar</a>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-center tilt-wrap">
+                        <div class="relative group tilt-card" id="profile-orb">
+                            <div class="orb-glow"></div>
+                            <div class="relative w-60 h-60 rounded-2xl card-solid card overflow-hidden flex items-center justify-center">
+                                <img src="assets/profile/profile.jpg" alt="Surya Sai Teja Desu" class="absolute inset-0 w-full h-full object-cover" onerror="this.remove()">
+                                <span class="txt-3 font-mono text-xs text-center px-4">[ Add assets/profile/profile.jpg ]</span>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Education Quick View -->
-            <div class="border border-slate-800 rounded-xl p-6 bg-cyberCard/40">
-                <h3 class="text-xl font-bold font-mono text-white mb-4">&gt; Education & Laurels</h3>
-                <div class="space-y-4">
-                    <div class="flex flex-col sm:flex-row justify-between sm:items-center border-b border-slate-800 pb-2">
+                <!-- Education -->
+                <div class="card p-6 md:p-8">
+                    <h3 class="text-xl font-bold font-mono txt-1 mb-5 flex items-center gap-2">
+                        <span class="accent">&gt;</span> Education &amp; Laurels
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="flex flex-col sm:flex-row justify-between sm:items-center border-b divider pb-3">
+                            <div class="txt-1">
+                                <span class="font-bold">IIT Hyderabad</span>
+                                <span class="txt-2"> — Dual Degree (B.Tech Honors + M.Tech) in Computer Science &amp; Engineering</span>
+                            </div>
+                            <span class="accent font-mono text-sm whitespace-nowrap">CGPA: 9.17 / 10</span>
+                        </div>
+                        <p class="text-sm txt-2">Recipient of the Kesav Nori Research Excellence Award and multiple Academic Excellence honors.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= TAB 2: RESEARCH ================= -->
+            <section id="research" class="tab-content space-y-8">
+                <div class="space-y-2">
+                    <h2 class="text-3xl font-extrabold tracking-tight font-mono txt-1">&gt;_ Lit Review &amp; Opinions</h2>
+                    <p class="txt-2 max-w-2xl">A curated space analyzing foundational peer-reviewed articles alongside internal critical analysis and technical positions.</p>
+                </div>
+
+                <div class="grid grid-cols-1 gap-6">
+                    <!-- Paper 1 -->
+                    <div class="card p-6">
+                        <span class="chip font-mono">FORMATS</span>
+                        <h3 class="text-xl font-bold txt-1 mt-3">Model Checking for Entanglement Swapping</h3>
+                        <p class="text-sm txt-3 italic mt-1">Desu, S. S. T., Srivastava, A., &amp; Rao, M. P.</p>
+                        <div class="mt-4 p-4 rounded-lg" style="background: rgba(56,189,248,0.06); border-left: 2px solid var(--accent-2);">
+                            <span class="text-xs font-mono uppercase block tracking-wider font-bold" style="color: var(--accent-2);">My Commentary / Takeaway:</span>
+                            <p class="txt-2 text-sm mt-1 leading-relaxed">
+                                This framework introduces Probabilistic Timed Automata (PTA) to model noisy, time-critical quantum repeater actions. Transitioning to PRISM's digital clocks engine dramatically cuts down the computational state-space growth, effectively proving that verification methodologies can proactively troubleshoot real-world discrete quantum network components before physical deployment.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Paper 2 -->
+                    <div class="card p-6">
+                        <span class="chip font-mono">ICCS</span>
+                        <h3 class="text-xl font-bold txt-1 mt-3">Adiabatic Quantum Feature Selection for Sparse Linear Regression</h3>
+                        <p class="text-sm txt-3 italic mt-1">Desu, S. S. T., Srijith, P. K., Rao, M. P., &amp; Sivadasan, N.</p>
+                        <div class="mt-4 p-4 rounded-lg" style="background: rgba(56,189,248,0.06); border-left: 2px solid var(--accent-2);">
+                            <span class="text-xs font-mono uppercase block tracking-wider font-bold" style="color: var(--accent-2);">My Commentary / Takeaway:</span>
+                            <p class="txt-2 text-sm mt-1 leading-relaxed">
+                                A solid optimization benchmark leveraging quantum annealers for massive feature reduction workloads. The key here is the structural conversion of algorithmic penalties into explicit quadratic unconstrained binary optimization (QUBO) topologies—showing immediate functional value on near-term NISQ arrays.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= TAB 3: PROJECTS ================= -->
+            <section id="projects" class="tab-content space-y-8">
+                <h2 class="text-3xl font-extrabold tracking-tight font-mono txt-1">&gt;_ Core Engineering Builds</h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Project 1 -->
+                    <div class="card p-6 flex flex-col justify-between">
                         <div>
-                            <span class="font-bold text-slate-200">IIT Hyderabad</span> — Dual Degree (B.Tech Honors + M.Tech) in Computer Science & Engineering
+                            <h3 class="text-xl font-bold txt-1">Hybrid Quantum-Classical Scale Framework</h3>
+                            <p class="text-sm txt-2 mt-2 leading-relaxed">
+                                Architected an enterprise optimization platform routing workflows across classical data layers and noise-constrained quantum processors. Scaled operation capabilities from 100 to over 1 Million variables within single-year target boundaries.
+                            </p>
                         </div>
-                        <span class="text-cyberNeon font-mono text-sm">CGPA: 9.17 / 10</span>
+                        <div class="mt-6 flex flex-wrap gap-2 font-mono">
+                            <span class="chip">Qiskit</span>
+                            <span class="chip">Python</span>
+                            <span class="chip">Docker</span>
+                        </div>
                     </div>
-                    <p class="text-sm text-slate-400">Recipient of the Kesav Nori Research Excellence Award and multiple Academic Excellence honors.</p>
-                </div>
-            </div>
-        </section>
 
-        <!-- ================= TAB 2: RESEARCH ================= -->
-        <section id="research" class="tab-content space-y-8">
-            <h2 class="text-3xl font-extrabold text-white tracking-tight font-mono">&gt;_ Lit Review & Opinions</h2>
-            <p class="text-slate-400 max-w-2xl">A curated space analyzing foundational peer-reviewed articles alongside internal critical analysis and technical positions.</p>
-            
-            <div class="grid grid-cols-1 gap-6">
-                <!-- Paper 1 -->
-                <div class="border border-slate-800 rounded-xl p-6 bg-cyberCard hover:border-slate-700 transition">
-                    <span class="text-xs font-mono px-2 py-1 rounded bg-cyberAccent/20 text-purple-300">FORMATS</span>
-                    <h3 class="text-xl font-bold text-white mt-2">Model Checking for Entanglement Swapping</h3>
-                    <p class="text-sm text-slate-400 italic mt-1">Desu, S. S. T., Srivastava, A., & Rao, M. P.</p>
-                    <div class="mt-4 p-4 rounded bg-cyberDark/60 border-l-2 border-cyberNeon">
-                        <span class="text-xs font-mono text-cyberNeon uppercase block tracking-wider font-bold">My Commentary / Takeaway:</span>
-                        <p class="text-slate-300 text-sm mt-1 leading-relaxed">
-                            This framework introduces Probabilistic Timed Automata (PTA) to model noisy, time-critical quantum repeater actions. Transitioning to PRISM's digital clocks engine dramatically cuts down the computational state-space growth, effectively proving that verification methodologies can proactively troubleshoot real-world discrete quantum network components before physical deployment.
-                        </p>
+                    <!-- Project 2 -->
+                    <div class="card p-6 flex flex-col justify-between">
+                        <div>
+                            <h3 class="text-xl font-bold txt-1">Inexact Qubit Mapping Optimization Compiler</h3>
+                            <p class="text-sm txt-2 mt-2 leading-relaxed">
+                                Developed a satisficing physical-to-logical compilation routing architecture. Systematically identifies non-critical paths in large quantum algorithms to relax routing constraints, lowering required physical qubit ceilings.
+                            </p>
+                        </div>
+                        <div class="mt-6 flex flex-wrap gap-2 font-mono">
+                            <span class="chip">Graph Theory</span>
+                            <span class="chip">Compilers</span>
+                            <span class="chip">C++</span>
+                        </div>
                     </div>
                 </div>
+            </section>
 
-                <!-- Paper 2 -->
-                <div class="border border-slate-800 rounded-xl p-6 bg-cyberCard hover:border-slate-700 transition">
-                    <span class="text-xs font-mono px-2 py-1 rounded bg-cyberAccent/20 text-purple-300">ICCS</span>
-                    <h3 class="text-xl font-bold text-white mt-2">Adiabatic Quantum Feature Selection for Sparse Linear Regression</h3>
-                    <p class="text-sm text-slate-400 italic mt-1">Desu, S. S. T., Srijith, P. K., Rao, M. P., & Sivadasan, N.</p>
-                    <div class="mt-4 p-4 rounded bg-cyberDark/60 border-l-2 border-cyberNeon">
-                        <span class="text-xs font-mono text-cyberNeon uppercase block tracking-wider font-bold">My Commentary / Takeaway:</span>
-                        <p class="text-slate-300 text-sm mt-1 leading-relaxed">
-                            A solid optimization benchmark leveraging quantum annealers for massive feature reduction workloads. The key here is the structural conversion of algorithmic penalties into explicit quadratic unconstrained binary optimization (QUBO) topologies—showing immediate functional value on near-term NISQ arrays.
-                        </p>
+            <!-- ================= TAB 4: GALLERY ================= -->
+            <section id="gallery" class="tab-content space-y-8">
+                <h2 class="text-3xl font-extrabold tracking-tight font-mono txt-1">&gt;_ Visual Log</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                    <div class="aspect-square card flex items-center justify-center p-4 text-center relative overflow-hidden">
+                        <img src="assets/gallery/1.jpg" alt="Research Conference Presentation" class="absolute inset-0 w-full h-full object-cover" onerror="this.remove()">
+                        <span class="txt-3 text-sm font-mono">[ assets/gallery/1.jpg ]</span>
+                    </div>
+                    <div class="aspect-square card flex items-center justify-center p-4 text-center relative overflow-hidden">
+                        <img src="assets/gallery/2.jpg" alt="Lab Benchmark Graph Output" class="absolute inset-0 w-full h-full object-cover" onerror="this.remove()">
+                        <span class="txt-3 text-sm font-mono">[ assets/gallery/2.jpg ]</span>
+                    </div>
+                    <div class="aspect-square card flex items-center justify-center p-4 text-center relative overflow-hidden">
+                        <img src="assets/gallery/3.jpg" alt="Team R&amp;D Hackathon Frame" class="absolute inset-0 w-full h-full object-cover" onerror="this.remove()">
+                        <span class="txt-3 text-sm font-mono">[ assets/gallery/3.jpg ]</span>
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <!-- ================= TAB 3: PROJECTS ================= -->
-        <section id="projects" class="tab-content space-y-8">
-            <h2 class="text-3xl font-extrabold text-white tracking-tight font-mono">&gt;_ Core Engineering Builds</h2>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Project Card 1 -->
-                <div class="border border-slate-800 bg-cyberCard/50 p-6 rounded-xl flex flex-col justify-between">
+            <!-- ================= TAB 5: GAMING ================= -->
+            <section id="gaming" class="tab-content space-y-8">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <div>
-                        <h3 class="text-xl font-bold text-white">Hybrid Quantum-Classical Scale Framework</h3>
-                        <p class="text-sm text-slate-400 mt-2 leading-relaxed">
-                            Architected an enterprise optimization platform routing workflows across classical data layers and noise-constrained quantum processors. Scaled operation capabilities from 100 to over 1 Million variables within single-year target boundaries.
-                        </p>
+                        <h2 class="text-3xl font-extrabold tracking-tight font-mono txt-1">&gt;_ Rec Room // Competitive Clips</h2>
+                        <p class="txt-2 text-sm mt-1">Decompressing with low-latency tactical FPS plays and competitive mechanical highlights.</p>
                     </div>
-                    <div class="mt-6 flex flex-wrap gap-2 text-xs font-mono text-cyberNeon">
-                        <span class="bg-slate-800 px-2 py-1 rounded">Qiskit</span>
-                        <span class="bg-slate-800 px-2 py-1 rounded">Python</span>
-                        <span class="bg-slate-800 px-2 py-1 rounded">Docker</span>
-                    </div>
+                    <span class="font-mono text-xs uppercase px-3 py-1 rounded-full tracking-wider whitespace-nowrap" style="background: rgba(244,63,94,0.1); color:#fb7185; border:1px solid rgba(244,63,94,0.25);">VALORANT // RADIANT_TRACKS</span>
                 </div>
 
-                <!-- Project Card 2 -->
-                <div class="border border-slate-800 bg-cyberCard/50 p-6 rounded-xl flex flex-col justify-between">
-                    <div>
-                        <h3 class="text-xl font-bold text-white">Inexact Qubit Mapping Optimization Compiler</h3>
-                        <p class="text-sm text-slate-400 mt-2 leading-relaxed">
-                            Developed a satisficing physical-to-logical compilation routing architecture. Systematically identifies non-critical paths in large quantum algorithms to relax routing constraints, lowering required physical qubit ceilings.
-                        </p>
-                    </div>
-                    <div class="mt-6 flex flex-wrap gap-2 text-xs font-mono text-cyberNeon">
-                        <span class="bg-slate-800 px-2 py-1 rounded">Graph Theory</span>
-                        <span class="bg-slate-800 px-2 py-1 rounded">Compilers</span>
-                        <span class="bg-slate-800 px-2 py-1 rounded">C++</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ================= TAB 4: GALLERY ================= -->
-        <section id="gallery" class="tab-content space-y-8">
-            <h2 class="text-3xl font-extrabold text-white tracking-tight font-mono">&gt;_ Visual Log</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                <!-- Image Placeholders -->
-                <div class="aspect-square bg-cyberCard border border-slate-800 rounded-xl flex items-center justify-center p-4 group hover:border-slate-700 transition">
-                    <span class="text-slate-500 text-sm font-mono">[ Research Conference Presentation ]</span>
-                </div>
-                <div class="aspect-square bg-cyberCard border border-slate-800 rounded-xl flex items-center justify-center p-4 group hover:border-slate-700 transition">
-                    <span class="text-slate-500 text-sm font-mono">[ Lab Benchmark Graph Output ]</span>
-                </div>
-                <div class="aspect-square bg-cyberCard border border-slate-800 rounded-xl flex items-center justify-center p-4 group hover:border-slate-700 transition">
-                    <span class="text-slate-500 text-sm font-mono">[ Team R&D Hackathon Frame ]</span>
-                </div>
-            </div>
-        </section>
-
-        <!-- ================= TAB 5: GAMING ================= -->
-        <section id="gaming" class="tab-content space-y-8">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <div>
-                    <h2 class="text-3xl font-extrabold text-white tracking-tight font-mono">&gt;_ Rec Room // Competitive Clips</h2>
-                    <p class="text-slate-400 text-sm mt-1">Decompressing with low-latency tactical FPS plays and competitive mechanical highlights.</p>
-                </div>
-                <span class="bg-red-500/10 text-red-400 text-xs uppercase px-3 py-1 rounded-full border border-red-500/20 font-mono tracking-wider">VALORANT // RADIANTE_TRACKS</span>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Clip Wrapper 1 -->
-                <div class="border border-slate-800 bg-cyberCard rounded-xl overflow-hidden shadow-2xl">
-                    <div class="aspect-video bg-black flex items-center justify-center relative">
-                        <!-- Replace 'src' with raw stream link or iframe embed code -->
-                        <video controls class="w-full h-full object-cover">
-                            <source src="your-clip-url.mp4" type="video/mp4">
-                            Your browser does not support the video tag.
-                        </video>
-                        <!-- Stand-in message if file paths are local -->
-                        <div class="absolute inset-0 flex items-center justify-center pointer-events-none bg-slate-900/40">
-                            <span class="text-xs font-mono text-slate-400 bg-black/80 px-3 py-1.5 rounded">Bind // Ace Clutch Clip Entry</span>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Clip 1 -->
+                    <div class="card overflow-hidden">
+                        <div class="aspect-video bg-black flex items-center justify-center relative">
+                            <video controls class="w-full h-full object-cover">
+                                <source src="your-clip-url.mp4" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                            <div class="absolute inset-0 flex items-center justify-center pointer-events-none bg-black/30">
+                                <span class="text-xs font-mono text-slate-200 bg-black/80 px-3 py-1.5 rounded">Bind // Ace Clutch Clip Entry</span>
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <h4 class="font-bold txt-1 text-base">Clutch Defensive Hold (Jett - Matchpoint)</h4>
+                            <p class="text-xs txt-3 mt-1 font-mono">Rank: Immortal Lobby // Variable Eco Round Execution</p>
                         </div>
                     </div>
-                    <div class="p-4">
-                        <h4 class="font-bold text-white text-base">Clutch Defensive Hold (Jett - Matchpoint)</h4>
-                        <p class="text-xs text-slate-400 mt-1 font-mono">Rank: Immortal Lobby // Variable Eco Round Execution</p>
-                    </div>
-                </div>
 
-                <!-- Clip Wrapper 2 -->
-                <div class="border border-slate-800 bg-cyberCard rounded-xl overflow-hidden shadow-2xl">
-                    <div class="aspect-video bg-black flex items-center justify-center relative">
-                        <video controls class="w-full h-full object-cover">
-                            <source src="your-clip-2-url.mp4" type="video/mp4">
-                        </video>
-                        <div class="absolute inset-0 flex items-center justify-center pointer-events-none bg-slate-900/40">
-                            <span class="text-xs font-mono text-slate-400 bg-black/80 px-3 py-1.5 rounded">Haven // Site Retake Entry</span>
+                    <!-- Clip 2 -->
+                    <div class="card overflow-hidden">
+                        <div class="aspect-video bg-black flex items-center justify-center relative">
+                            <video controls class="w-full h-full object-cover">
+                                <source src="your-clip-2-url.mp4" type="video/mp4">
+                            </video>
+                            <div class="absolute inset-0 flex items-center justify-center pointer-events-none bg-black/30">
+                                <span class="text-xs font-mono text-slate-200 bg-black/80 px-3 py-1.5 rounded">Haven // Site Retake Entry</span>
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <h4 class="font-bold txt-1 text-base">Perfect Retake Alignment (Omen Flank Control)</h4>
+                            <p class="text-xs txt-3 mt-1 font-mono">Rank: Immortal Lobby // Crosshair Placement Highlight</p>
                         </div>
                     </div>
-                    <div class="p-4">
-                        <h4 class="font-bold text-white text-base">Perfect Retake Alignment (Omen Flank Control)</h4>
-                        <p class="text-xs text-slate-400 mt-1 font-mono">Rank: Immortal Lobby // Crosshair Placement Highlight</p>
-                    </div>
                 </div>
-            </div>
-        </section>
+            </section>
 
-    </main>
+        </main>
 
-    <!-- Simple, Bulletproof Tab Router JavaScript -->
+        <footer class="max-w-6xl mx-auto px-6 py-10 text-center">
+            <p class="font-mono text-xs txt-3">// Crafted among the stars · Surya Sai Teja Desu</p>
+        </footer>
+    </div>
+
+    <!-- ============ TAB ROUTER + THEME (no 3D dependency) ============ -->
     <script>
-        function switchTab(tabId) {
-            // Hide all tab contents
-            const contents = document.querySelectorAll('.tab-content');
-            contents.forEach(content => content.classList.remove('active'));
-
-            // Remove active styling from all buttons
-            const buttons = document.querySelectorAll('.tab-btn');
-            buttons.forEach(btn => {
-                btn.classList.remove('text-cyberNeon', 'border', 'border-cyberNeon/30', 'bg-cyberNeon/10');
-                btn.classList.add('hover:text-white', 'hover:bg-slate-800');
-            });
-
-            // Activate chosen tab content
-            document.getElementById(tabId).classList.add('active');
-
-            // Apply active styles to active button
-            const activeBtn = document.getElementById('btn-' + tabId);
-            activeBtn.classList.remove('hover:text-white', 'hover:bg-slate-800');
-            activeBtn.classList.add('text-cyberNeon', 'border', 'border-cyberNeon/30', 'bg-cyberNeon/10');
+        // Tabs
+        function switchTab(id) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.toggle('active', c.id === id));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === id));
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
+        document.querySelectorAll('.tab-btn').forEach(b => b.addEventListener('click', () => switchTab(b.dataset.tab)));
+
+        // Theme (persisted). window.__onThemeChange is set by the 3D module.
+        const root = document.documentElement;
+        function setTheme(theme) {
+            root.classList.toggle('light', theme === 'light');
+            root.classList.toggle('dark', theme !== 'light');
+            localStorage.setItem('theme', theme);
+            if (window.__onThemeChange) window.__onThemeChange(theme);
+        }
+        (function initTheme() {
+            const saved = localStorage.getItem('theme');
+            const prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+            setTheme(saved || (prefersLight ? 'light' : 'dark'));
+        })();
+        document.getElementById('theme-toggle').addEventListener('click', () => {
+            setTheme(root.classList.contains('light') ? 'dark' : 'light');
+        });
+
+        // Profile card 3D tilt
+        const orb = document.getElementById('profile-orb');
+        const wrap = orb.closest('.tilt-wrap');
+        wrap.addEventListener('mousemove', (e) => {
+            const r = wrap.getBoundingClientRect();
+            const px = (e.clientX - r.left) / r.width - 0.5;
+            const py = (e.clientY - r.top) / r.height - 0.5;
+            orb.style.transform = `rotateY(${px * 18}deg) rotateX(${-py * 18}deg)`;
+        });
+        wrap.addEventListener('mouseleave', () => { orb.style.transform = 'rotateY(0) rotateX(0)'; });
+    </script>
+
+    <!-- ============ INTERACTIVE 3D GALAXY (Three.js) ============ -->
+    <script type="module">
+        import * as THREE from 'three';
+
+        const canvas = document.getElementById('bg-canvas');
+        const scene = new THREE.Scene();
+
+        const camera = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, 0.1, 100);
+        camera.position.set(0, 2.4, 6.5);
+
+        const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+        renderer.setSize(innerWidth, innerHeight);
+        renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+
+        // ---- Theme color palettes for the cosmos ----
+        const PALETTE = {
+            dark:  { inside: '#ffb56b', outside: '#7c3aed', star: '#cdd6ff', starOpacity: 0.9, galaxyOpacity: 0.95, blending: THREE.AdditiveBlending },
+            light: { inside: '#db2777', outside: '#4f46e5', star: '#6d5dc7', starOpacity: 0.55, galaxyOpacity: 0.85, blending: THREE.NormalBlending }
+        };
+
+        // ---- Galaxy generator ----
+        const galaxyCfg = { count: 38000, radius: 6.5, branches: 4, spin: 1.1, randomness: 0.55, randomnessPower: 2.6, size: 0.035 };
+        let galaxy = null;
+
+        function buildGalaxy(theme) {
+            const p = PALETTE[theme] || PALETTE.dark;
+            if (galaxy) {
+                galaxy.geometry.dispose();
+                galaxy.material.dispose();
+                scene.remove(galaxy);
+            }
+            const geo = new THREE.BufferGeometry();
+            const positions = new Float32Array(galaxyCfg.count * 3);
+            const colors = new Float32Array(galaxyCfg.count * 3);
+            const cIn = new THREE.Color(p.inside);
+            const cOut = new THREE.Color(p.outside);
+
+            for (let i = 0; i < galaxyCfg.count; i++) {
+                const i3 = i * 3;
+                const r = Math.pow(Math.random(), 1.4) * galaxyCfg.radius;
+                const branch = (i % galaxyCfg.branches) / galaxyCfg.branches * Math.PI * 2;
+                const spin = r * galaxyCfg.spin;
+                const rp = galaxyCfg.randomnessPower;
+                const rand = () => Math.pow(Math.random(), rp) * (Math.random() < 0.5 ? 1 : -1) * galaxyCfg.randomness * r;
+
+                positions[i3]     = Math.cos(branch + spin) * r + rand();
+                positions[i3 + 1] = rand() * 0.5;
+                positions[i3 + 2] = Math.sin(branch + spin) * r + rand();
+
+                const col = cIn.clone().lerp(cOut, r / galaxyCfg.radius);
+                colors[i3] = col.r; colors[i3 + 1] = col.g; colors[i3 + 2] = col.b;
+            }
+            geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+            const mat = new THREE.PointsMaterial({
+                size: galaxyCfg.size,
+                sizeAttenuation: true,
+                depthWrite: false,
+                blending: p.blending,
+                vertexColors: true,
+                transparent: true,
+                opacity: p.galaxyOpacity
+            });
+            galaxy = new THREE.Points(geo, mat);
+            galaxy.rotation.x = 0.42;
+            scene.add(galaxy);
+        }
+
+        // ---- Background starfield ----
+        let stars = null;
+        function buildStars(theme) {
+            const p = PALETTE[theme] || PALETTE.dark;
+            if (stars) { stars.geometry.dispose(); stars.material.dispose(); scene.remove(stars); }
+            const n = 1800;
+            const geo = new THREE.BufferGeometry();
+            const pos = new Float32Array(n * 3);
+            for (let i = 0; i < n; i++) {
+                const i3 = i * 3;
+                pos[i3]     = (Math.random() - 0.5) * 60;
+                pos[i3 + 1] = (Math.random() - 0.5) * 60;
+                pos[i3 + 2] = (Math.random() - 0.5) * 60;
+            }
+            geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+            const mat = new THREE.PointsMaterial({
+                color: new THREE.Color(p.star),
+                size: 0.06,
+                sizeAttenuation: true,
+                transparent: true,
+                opacity: p.starOpacity,
+                depthWrite: false,
+                blending: p.blending
+            });
+            stars = new THREE.Points(geo, mat);
+            scene.add(stars);
+        }
+
+        function rebuild(theme) { buildGalaxy(theme); buildStars(theme); }
+        rebuild(document.documentElement.classList.contains('light') ? 'light' : 'dark');
+
+        // expose recolor hook to the theme toggle
+        window.__onThemeChange = (theme) => rebuild(theme === 'light' ? 'light' : 'dark');
+
+        // ---- Interaction: mouse parallax + scroll zoom ----
+        const mouse = { x: 0, y: 0 };
+        addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX / innerWidth - 0.5;
+            mouse.y = e.clientY / innerHeight - 0.5;
+        });
+        let scrollFactor = 0;
+        addEventListener('scroll', () => {
+            const max = Math.max(1, document.body.scrollHeight - innerHeight);
+            scrollFactor = Math.min(1, scrollY / max);
+        }, { passive: true });
+
+        addEventListener('resize', () => {
+            camera.aspect = innerWidth / innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(innerWidth, innerHeight);
+            renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+        });
+
+        const clock = new THREE.Clock();
+        function tick() {
+            const t = clock.getElapsedTime();
+            if (galaxy) galaxy.rotation.y = t * 0.055;
+            if (stars) stars.rotation.y = t * 0.012;
+
+            const targetX = mouse.x * 2.2;
+            const targetY = 2.4 + (-mouse.y * 1.6);
+            const targetZ = 6.5 + scrollFactor * 3.0;
+            camera.position.x += (targetX - camera.position.x) * 0.045;
+            camera.position.y += (targetY - camera.position.y) * 0.045;
+            camera.position.z += (targetZ - camera.position.z) * 0.045;
+            camera.lookAt(0, 0, 0);
+
+            renderer.render(scene, camera);
+            requestAnimationFrame(tick);
+        }
+        tick();
     </script>
 </body>
 </html>
