@@ -592,8 +592,7 @@
         }
         (function initTheme() {
             const saved = localStorage.getItem('theme');
-            const prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
-            setTheme(saved || (prefersLight ? 'light' : 'dark'));
+            setTheme(saved === 'light' ? 'light' : 'dark');
         })();
         document.getElementById('theme-toggle').addEventListener('click', () => {
             setTheme(root.classList.contains('light') ? 'dark' : 'light');
