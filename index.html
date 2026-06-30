@@ -397,8 +397,12 @@
 
             <!-- ===== PROJECTS ===== -->
             <section id="projects" class="tab-content space-y-8">
-                <h2 id="projects-title" class="text-3xl font-extrabold tracking-tight font-mono txt-1"></h2>
+                <div class="space-y-2">
+                    <h2 id="projects-title" class="text-3xl font-extrabold tracking-tight font-mono txt-1"></h2>
+                    <p id="projects-intro" class="txt-2 max-w-2xl"></p>
+                </div>
                 <div id="projects-list" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+                <div id="projects-more" class="flex justify-center pt-2"></div>
             </section>
 
             <!-- ===== GALLERY ===== -->
@@ -492,9 +496,14 @@
             },
             projects: {
                 title: ">_ Things I've Built",
+                intro: "Open-source work across ML, quantum tooling, and systems — each links to its source on GitHub.",
+                allRepos: "https://github.com/suryadesu?tab=repositories&q=&type=&language=&sort=",
                 items: [
-                    { title: "Hybrid Quantum-Classical Scale Framework", description: "A hybrid engine that splits optimization across classical machines and noisy quantum processors. In a year we took it from 100 variables to over a million — solving instances classical solvers couldn't even begin.", tags: ["Qiskit", "Python", "Docker"] },
-                    { title: "Inexact Qubit Mapping Optimization Compiler", description: "A compiler that knows when \"good enough\" is good enough. It finds the non-critical paths in large quantum circuits and relaxes their routing, cutting the physical qubits a program needs to run.", tags: ["Graph Theory", "Compilers", "C++"] },
+                    { title: "Model Checking for Entanglement Swapping", repo: "https://github.com/suryadesu/artifact", description: "Reproducibility artifact for our FORMATS 2022 paper. It pairs the PRISM probabilistic model checker with a modified SeQUeNCe quantum-network simulator to verify entanglement-swapping protocols, running 2000 trials per experiment to regenerate every plot in the paper.", tags: ["Python", "PRISM", "SeQUeNCe", "Model Checking"] },
+                    { title: "code2vec Code Classification", repo: "https://github.com/suryadesu/c2vClassification", description: "A PyTorch implementation of the code2vec model: source methods are split into AST path-contexts (leaf → path → leaf), embedded, pooled with an attention layer, and classified — with an optional angular-margin (ArcFace-style) loss head.", tags: ["Python", "PyTorch", "code2vec", "ML"] },
+                    { title: "Unsupervised Author Disambiguation", repo: "https://github.com/suryadesu/Unsupervised-author-disambiguation", description: "Works out which identically-named authors in the AMiner/DBLP corpus are actually different people — clustering papers from co-author, venue, field-of-study and abstract word-frequency signals, with no labels required.", tags: ["C++", "Python", "Data Mining", "NLP"] },
+                    { title: "MCIWidGeT — Monte Carlo Integrator", repo: "https://github.com/suryadesu/MCIWidGeT", description: "An Android app that evaluates definite integrals by Monte Carlo uniform sampling. It parses arbitrary expressions with exp4j and converges on the area as the sample count grows.", tags: ["Java", "Android", "Monte Carlo"] },
+                    { title: "Linux Setup Scripts", repo: "https://github.com/suryadesu/ubuntu-installation-Scripts", description: "One-shot Bash scripts that provision a fresh Linux box — KVM virtualization, the LLVM toolchain, Vim-Plug plus plugins, and a conda environment for the D-Wave Ocean quantum SDK.", tags: ["Bash", "Linux", "Automation"] },
                 ],
             },
             gallery: {
@@ -581,16 +590,23 @@
 
             const pr = CONTENT.projects;
             $("projects-title").textContent = pr.title;
+            $("projects-intro").textContent = pr.intro;
             $("projects-list").innerHTML = pr.items.map((it) =>
                 `<div class="card p-6 flex flex-col justify-between">
                     <div>
-                        <h3 class="text-xl font-bold txt-1">${esc(it.title)}</h3>
+                        <div class="flex items-start justify-between gap-3">
+                            <h3 class="text-xl font-bold txt-1">${it.repo ? `<a href="${esc(it.repo)}" target="_blank" rel="noopener noreferrer" class="paper-link">${esc(it.title)}</a>` : esc(it.title)}</h3>
+                            ${it.repo ? `<a href="${esc(it.repo)}" target="_blank" rel="noopener noreferrer" class="link-mono whitespace-nowrap">code &gt;_</a>` : ""}
+                        </div>
                         <p class="text-sm txt-2 mt-2 leading-relaxed">${esc(it.description)}</p>
                     </div>
                     <div class="mt-6 flex flex-wrap gap-2 font-mono">
                         ${(it.tags || []).map((t) => `<span class="chip">${esc(t)}</span>`).join("")}
                     </div>
                 </div>`).join("");
+            $("projects-more").innerHTML = pr.allRepos
+                ? `<a href="${esc(pr.allRepos)}" target="_blank" rel="noopener noreferrer" class="view-more-btn">View all repositories &gt;_</a>`
+                : "";
 
             const g = CONTENT.gallery;
             $("gallery-title").textContent = g.title;
