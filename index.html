@@ -45,25 +45,25 @@
             --veil-top: rgba(10, 15, 22, 0.5);
         }
         html.light {
-            --bg-0: #e7ecef;
-            --bg-1: #eef2f5;
-            --bg-2: #d6e3ee;
-            --text-1: #1b2c44;
-            --text-2: #34475f;
-            --text-3: #5c6671;
-            --accent: #274c77;
-            --accent-2: #6096ba;
-            --accent-3: #a3cef1;
-            --card-bg: rgba(255, 255, 255, 0.70);
-            --card-bg-solid: rgba(255, 255, 255, 0.88);
-            --card-border: rgba(39, 76, 119, 0.20);
-            --card-border-hover: rgba(39, 76, 119, 0.5);
-            --header-bg: rgba(231, 236, 239, 0.7);
-            --chip-bg: rgba(39, 76, 119, 0.08);
-            --glow: 0 0 40px rgba(39, 76, 119, 0.16);
-            --scroll-thumb: #6096ba;
-            --veil: rgba(231, 236, 239, 0.82);
-            --veil-top: rgba(231, 236, 239, 0.58);
+            --bg-0: #f5f3f8;
+            --bg-1: #fbfafe;
+            --bg-2: #ece7f3;
+            --text-1: #140f1c;
+            --text-2: #382f47;
+            --text-3: #5f5570;
+            --accent: #6d28d9;
+            --accent-2: #7c3aed;
+            --accent-3: #c4b5fd;
+            --card-bg: rgba(255, 255, 255, 0.72);
+            --card-bg-solid: rgba(255, 255, 255, 0.90);
+            --card-border: rgba(109, 40, 217, 0.16);
+            --card-border-hover: rgba(109, 40, 217, 0.5);
+            --header-bg: rgba(245, 243, 248, 0.75);
+            --chip-bg: rgba(109, 40, 217, 0.08);
+            --glow: 0 0 40px rgba(109, 40, 217, 0.13);
+            --scroll-thumb: #7c3aed;
+            --veil: rgba(245, 243, 248, 0.82);
+            --veil-top: rgba(245, 243, 248, 0.58);
         }
 
         * { -webkit-tap-highlight-color: transparent; }
@@ -151,8 +151,24 @@
             color: transparent;
             animation: shimmer 7s linear infinite;
         }
-        html.light .gradient-text { background-image: linear-gradient(110deg, #16243a, #274c77 42%, #4f86b3); }
+        html.light .gradient-text { background-image: linear-gradient(110deg, #4c1d95, #6d28d9 45%, #7c3aed); }
         @keyframes shimmer { to { background-position: 220% center; } }
+
+        .paper-link { color: inherit; text-decoration: none; transition: color .2s ease; }
+        .paper-link:hover { color: var(--accent); }
+        #research-list .research-hidden { display: none; }
+        #research-list.expanded .research-hidden { display: flex; }
+        #research-list .card { height: 100%; }
+        .research-title { min-height: 3.1rem; }
+        .takeaway-box { flex: 1 1 auto; display: flex; align-items: center; }
+        .view-more-btn {
+            margin-top: .5rem; cursor: pointer;
+            font-family: ui-monospace, monospace; font-size: .8rem; letter-spacing: .08em;
+            color: var(--accent); background: var(--chip-bg);
+            border: 1px solid var(--card-border); border-radius: 9999px;
+            padding: .55rem 1.5rem; transition: border-color .3s ease, box-shadow .3s ease;
+        }
+        .view-more-btn:hover { border-color: var(--card-border-hover); box-shadow: var(--glow); }
 
         .link-mono {
             color: var(--text-2);
@@ -332,7 +348,8 @@
                     <h2 id="research-title" class="text-3xl font-extrabold tracking-tight font-mono txt-1"></h2>
                     <p id="research-intro" class="txt-2 max-w-2xl"></p>
                 </div>
-                <div id="research-list" class="grid grid-cols-1 gap-6"></div>
+                <div id="research-list" class="grid grid-cols-1 md:grid-cols-2 gap-5"></div>
+                <div id="research-more" class="text-center"></div>
             </section>
 
             <!-- ===== PROJECTS ===== -->
@@ -343,7 +360,10 @@
 
             <!-- ===== GALLERY ===== -->
             <section id="gallery" class="tab-content space-y-8">
-                <h2 id="gallery-title" class="text-3xl font-extrabold tracking-tight font-mono txt-1"></h2>
+                <div class="space-y-2">
+                    <h2 id="gallery-title" class="text-3xl font-extrabold tracking-tight font-mono txt-1"></h2>
+                    <p id="gallery-intro" class="txt-2 max-w-2xl"></p>
+                </div>
                 <div id="gallery-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"></div>
             </section>
 
@@ -397,11 +417,25 @@
                 note: "Recipient of the Kesav Nori Research Excellence Award and multiple Academic Excellence honors.",
             },
             research: {
-                title: ">_ Selected Publications",
-                intro: "Peer-reviewed work I've authored — each with the one idea that matters, in plain English.",
+                title: ">_ Reading List",
+                intro: "Papers and books I keep returning to from my research journey — each with a quick personal takeaway.",
                 items: [
-                    { tag: "FORMATS", title: "Model Checking for Entanglement Swapping", authors: "Desu, S. S. T., Srivastava, A., & Rao, M. P.", takeaway: "We modeled noisy, time-sensitive quantum repeaters as probabilistic timed automata and verified them in PRISM. Switching to its digital-clocks engine tamed the state-space explosion — so you can catch a quantum network's failure modes on paper, before anyone builds the hardware." },
-                    { tag: "ICCS", title: "Adiabatic Quantum Feature Selection for Sparse Linear Regression", authors: "Desu, S. S. T., Srijith, P. K., Rao, M. P., & Sivadasan, N.", takeaway: "We recast feature selection as a QUBO and let a quantum annealer prune the noise from sparse regression. The real work is translating statistical penalties into something today's NISQ hardware can optimize — useful now, not someday." },
+                    { tag: "FOUNDATIONS", title: "Quantum Computation and Quantum Information", link: "https://doi.org/10.1017/CBO9780511976667", authors: "Nielsen & Chuang · Cambridge", takeaway: "Bible of quantum computing is the way I was introduced to it by my professor and there is no other way I would describe it. Starting point I keep visiting again." },
+                    { tag: "COMPLEXITY", title: "Quantum NP — A Survey", link: "https://arxiv.org/abs/quant-ph/0210077", authors: "Aharonov & Naveh · 2002", takeaway: "Where I first really understood QMA and the local-Hamiltonian problem with analogies to Cook-Levin's theorem." },
+                    { tag: "COMPLEXITY", title: "Quantum Computation by Adiabatic Evolution", link: "https://arxiv.org/abs/quant-ph/0001106", authors: "Farhi, Goldstone, Gutmann & Sipser · 2000", takeaway: "The adiabatic algorithm: runtime is dictated by the spectral gap of the interpolating Hamiltonian. The paper that made 'the gap is everything' click for me." },
+                    { tag: "RESERVOIR", title: "Quantum Optical Reservoir Computing Powered by Boson Sampling", link: "https://doi.org/10.1364/OPTICAQ.541432", authors: "Sakurai, Hayashi, Munro & Nemoto · Optica Quantum 2025", takeaway: "Turns boson sampling's 'useless' randomness into a computational resource — even modest interferometers do real image recognition. Loved the reframing." },
+                    { tag: "RESERVOIR", title: "Minimal Quantum Reservoirs with Hamiltonian Encoding", link: "https://doi.org/10.1063/5.0282921", authors: "McCaul et al. · Chaos 2025", takeaway: "First paper I reviewed in my journey of Quantum reservoir computing using Hamiltonian encoding, elegant minimalism, no pun intended :)" },
+                    { tag: "COMPLEXITY", title: "The Complexity of the Local Hamiltonian Problem", link: "https://arxiv.org/abs/quant-ph/0406180", authors: "Kempe, Kitaev & Regev · 2004", takeaway: "Settles 2-local Hamiltonian as QMA-complete and shows 2-local adiabatic computation is universal. The perturbation-gadget proof is the part I keep re-reading." },
+                    { tag: "COMPLEXITY", title: "Complexity Classification of Local Hamiltonian Problems", link: "https://epubs.siam.org/doi/abs/10.1137/140998287", authors: "Cubitt & Montanaro · SIAM J. Comput. 2016", takeaway: "The quantum analogue of Schaefer's dichotomy theorem. A clean map of where hardness lives and how to identify hamiltonian structures that are tractable vs intractable with guarantees." },
+                    { tag: "RESERVOIR", title: "Theory and Interpretability of Quantum Extreme Learning Machines: a Pauli-Transfer-Matrix Approach", link: "https://arxiv.org/abs/2602.18377", authors: "Gross & Rieser · 2026", takeaway: "Makes a quantum reservoir interpretable via the Pauli-transfer matrix: training becomes a decoding problem that 'un-scrambles' Pauli features. Rare clarity for QML." },
+                    { tag: "DEQUANTIZATION", title: "Dequantizing Quantum Machine Learning Models Using Tensor Networks", link: "https://journals.aps.org/prresearch/abstract/10.1103/PhysRevResearch.6.023218", authors: "Shin, Teo & Jeong · Phys. Rev. Research 2024", takeaway: "Recasts every variational QML model as a constrained matrix-product state, giving crisp conditions for when a 'quantum' model is secretly classical. " },
+                    { tag: "DEQUANTIZATION", title: "Dequantizing the Quantum Singular Value Transformation", link: "https://dl.acm.org/doi/10.1145/3519935.3519991", authors: "Gharibian & Le Gall · STOC 2022", takeaway: "Dequantizes the QSVT for sparse low-degree polynomials, a work that grounds ones understanding about quantum hardness and risk of classical tractability " },
+                    { tag: "SOFTWARE", title: "OpenQL: A Portable Quantum Programming Framework for Quantum Accelerators", link: "https://arxiv.org/abs/2005.13283", authors: "Khammassi et al. · 2020", takeaway: "Treats the QPU as an accelerator with a portable compiler/runtime. Good reference for how a real quantum software stack looks like for compilation and scheduling." },
+                    { tag: "FOUNDATIONS", title: "Analysis of Boolean Functions", link: "https://www.cs.cmu.edu/~odonnell/papers/Analysis-of-Boolean-Functions-by-Ryan-ODonnell.pdf", authors: "Ryan O'Donnell · book", takeaway: "Fourier analysis on the Boolean cube — influence, noise stability, hypercontractivity. The toolbox behind half the classical works I care about; the book I keep on the desk." },
+                    { tag: "ALGORITHM", title: "Towards Large-Scale Quantum Optimization Solvers with Few Qubits", link: "https://www.nature.com/articles/s41467-024-55346-z", authors: "Sciorilli et al. · Nature Communications 2025", takeaway: "While the typical quantum community focussed on speeding up traditional QAOAs or VQEs, struggling with 1:1 or logarithmic encodings, this paper opened me to a whole new world of efficiency gains focussing on encoding that is parameterized. Sort of like, thinking out of the box moment." },
+                    { tag: "SOFTWARE", title: "DeepQuantum: A PyTorch-based Platform for QML and Photonic Quantum Computing", link: "https://arxiv.org/abs/2512.18995", authors: "He et al. · 2025", takeaway: "PyTorch-native QML with photonic backends and tensor-network scaling. The closed-loop 'AI for Quantum / Quantum for AI' framing is what hooked me." },
+                    { tag: "SOFTWARE", title: "TensorCircuit: A Quantum Software Framework for the NISQ Era", link: "https://arxiv.org/abs/2205.10091", authors: "Zhang et al. · 2022", takeaway: "Tensor-network simulation with autodiff + JIT on top of ML frameworks — ~600 qubits for the right circuits. Was the default workbench for experiments for a while." },
+                    { tag: "SOFTWARE", title: "Q# as a Quantum Algorithmic Language", link: "https://arxiv.org/abs/2206.03532", authors: "Singhal, Hietala, Marshall & Rand · 2022", takeaway: "A formal core for Q# (λ-Q#) viewing it as a quantum Algol — type safety and equational semantics for quantum programs, not just an SDK. Programming languages rigour meets QC." },
                 ],
             },
             projects: {
@@ -413,6 +447,7 @@
             },
             gallery: {
                 title: ">_ Visual Log",
+                intro: "A Glimpse into my past",
                 items: [
                     { src: "assets/gallery/1.jpg", caption: "Research Conference Presentation" },
                     { src: "assets/gallery/2.jpg", caption: "Lab Benchmark Graph Output" },
@@ -421,8 +456,8 @@
             },
             gaming: {
                 title: ">_ Rec Room // Competitive Clips",
-                intro: "When I'm not chasing qubits, I'm chasing aces. A few highlights from the ranked grind.",
-                badge: "VALORANT // RADIANT_TRACKS",
+                intro: "When I'm not chasing qubits, I'm chasing aces. A few highlights from gaming journey.",
+                badge: "VALORANT",
                 items: [
                     { src: "your-clip-url.mp4", label: "Bind // Ace Clutch Clip Entry", title: "Clutch Defensive Hold (Jett - Matchpoint)", meta: "Rank: Immortal Lobby // Variable Eco Round Execution" },
                     { src: "your-clip-2-url.mp4", label: "Haven // Site Retake Entry", title: "Perfect Retake Alignment (Omen Flank Control)", meta: "Rank: Immortal Lobby // Crosshair Placement Highlight" },
@@ -465,16 +500,34 @@
             const r = CONTENT.research;
             $("research-title").textContent = r.title;
             $("research-intro").textContent = r.intro;
-            $("research-list").innerHTML = r.items.map((it) =>
-                `<div class="card p-6">
-                    <span class="chip font-mono">${esc(it.tag)}</span>
-                    <h3 class="text-xl font-bold txt-1 mt-3">${esc(it.title)}</h3>
+            const RESEARCH_VISIBLE = 4;
+            $("research-list").innerHTML = r.items.map((it, i) =>
+                `<div class="card p-6 flex flex-col${i >= RESEARCH_VISIBLE ? " research-hidden" : ""}">
+                    <div class="flex items-center justify-between gap-3">
+                        <span class="chip font-mono">${esc(it.tag)}</span>
+                        ${it.link ? `<a href="${esc(it.link)}" target="_blank" rel="noopener noreferrer" class="link-mono whitespace-nowrap">read ↗</a>` : ""}
+                    </div>
+                    <h3 class="text-lg font-bold txt-1 mt-3 leading-snug research-title">${it.link ? `<a href="${esc(it.link)}" target="_blank" rel="noopener noreferrer" class="paper-link">${esc(it.title)}</a>` : esc(it.title)}</h3>
                     <p class="text-sm txt-3 italic mt-1">${esc(it.authors)}</p>
-                    <div class="mt-4 p-4 rounded-lg" style="background: rgba(96,150,186,0.06); border-left: 2px solid var(--accent);">
-                        <span class="text-xs font-mono uppercase block tracking-wider font-bold" style="color: var(--accent);">In plain English:</span>
-                        <p class="txt-2 text-sm mt-1 leading-relaxed">${esc(it.takeaway)}</p>
+                    <div class="takeaway-box mt-3 p-4 rounded-lg" style="background: var(--chip-bg); border-left: 2px solid var(--accent);">
+                        <p class="txt-2 text-sm leading-relaxed">${esc(it.takeaway)}</p>
                     </div>
                 </div>`).join("");
+            (function setupResearchToggle() {
+                const extra = r.items.length - RESEARCH_VISIBLE;
+                const wrap = $("research-more"), list = $("research-list");
+                if (extra <= 0 || !wrap) return;
+                const btn = document.createElement("button");
+                btn.className = "view-more-btn";
+                const collapsed = `View all ↓`, opened = "Show fewer ↑";
+                btn.textContent = collapsed;
+                btn.addEventListener("click", () => {
+                    const open = list.classList.toggle("expanded");
+                    btn.textContent = open ? opened : collapsed;
+                    if (!open) document.getElementById("research").scrollIntoView({ behavior: "smooth" });
+                });
+                wrap.appendChild(btn);
+            })();
 
             const pr = CONTENT.projects;
             $("projects-title").textContent = pr.title;
@@ -491,6 +544,7 @@
 
             const g = CONTENT.gallery;
             $("gallery-title").textContent = g.title;
+            $("gallery-intro").textContent = g.intro;
             $("gallery-list").innerHTML = g.items.map((it) =>
                 `<div class="aspect-square card flex items-center justify-center p-4 text-center relative overflow-hidden">
                     <img src="${esc(it.src)}" alt="${esc(it.caption)}" class="absolute inset-0 w-full h-full object-cover" onerror="this.remove()">
@@ -574,7 +628,7 @@
         // ---- Theme color palettes for the cosmos ----
         const PALETTE = {
             dark:  { inside: '#a3cef1', outside: '#274c77', star: '#cdd9e6', starOpacity: 0.5,  galaxyOpacity: 0.55, blending: THREE.AdditiveBlending },
-            light: { inside: '#274c77', outside: '#6096ba', star: '#8ba6bd', starOpacity: 0.34, galaxyOpacity: 0.5,  blending: THREE.NormalBlending }
+            light: { inside: '#6d28d9', outside: '#9b8fb5', star: '#a99fc0', starOpacity: 0.32, galaxyOpacity: 0.5,  blending: THREE.NormalBlending }
         };
 
         // ---- Galaxy generator ----
