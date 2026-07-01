@@ -515,11 +515,13 @@
             },
             gaming: {
                 title: ">_ Rec Room // Competitive Clips",
-                intro: "When I'm not chasing qubits, I'm chasing aces. A few highlights from gaming journey.",
+                intro: "When I'm not chasing qubits, I'm chasing aces — a few highlights from the ranked grind.",
                 badge: "VALORANT",
                 items: [
-                    { src: "your-clip-url.mp4", label: "Bind // Ace Clutch Clip Entry", title: "Clutch Defensive Hold (Jett - Matchpoint)", meta: "Rank: Immortal Lobby // Variable Eco Round Execution" },
-                    { src: "your-clip-2-url.mp4", label: "Haven // Site Retake Entry", title: "Perfect Retake Alignment (Omen Flank Control)", meta: "Rank: Immortal Lobby // Crosshair Placement Highlight" },
+                    { src: "assets/gaming/raze-ace-clutch.mp4", poster: "assets/gaming/raze-ace-clutch.jpg", title: "Raze — Ace Clutch", meta: "Five kills to take the round", tag: "Ace" },
+                    { src: "assets/gaming/kayo-haven-3k.mp4", poster: "assets/gaming/kayo-haven-3k.jpg", title: "KAY/O — 3K on Haven", meta: "Three-kill hold to swing the site", tag: "Haven" },
+                    { src: "assets/gaming/sheriff-thrifty-3k.mp4", poster: "assets/gaming/sheriff-thrifty-3k.jpg", title: "Sheriff — 3K Thrifty", meta: "Three Sheriff kills to steal the round", tag: "Thrifty" },
+                    { src: "assets/gaming/headhunter.mp4", poster: "assets/gaming/headhunter.jpg", title: "Headhunter", meta: "When the headshots just land", tag: "Headshots" },
                 ],
             },
         };
@@ -651,16 +653,18 @@
             $("gaming-intro").textContent = gm.intro;
             $("gaming-badge").textContent = gm.badge;
             $("gaming-list").innerHTML = gm.items.map((it) =>
-                `<div class="card overflow-hidden">
-                    <div class="aspect-video bg-black flex items-center justify-center relative">
-                        <video controls class="w-full h-full object-cover"><source src="${esc(it.src)}" type="video/mp4"></video>
-                        <div class="absolute inset-0 flex items-center justify-center pointer-events-none bg-black/30">
-                            <span class="text-xs font-mono text-slate-200 bg-black/80 px-3 py-1.5 rounded">${esc(it.label)}</span>
-                        </div>
+                `<div class="card overflow-hidden flex flex-col">
+                    <div class="aspect-video bg-black relative">
+                        <video class="w-full h-full object-contain" controls preload="none" playsinline ${it.poster ? `poster="${esc(it.poster)}"` : ""}>
+                            <source src="${esc(it.src)}" type="video/mp4">
+                        </video>
                     </div>
-                    <div class="p-4">
-                        <h4 class="font-bold txt-1 text-base">${esc(it.title)}</h4>
-                        <p class="text-xs txt-3 mt-1 font-mono">${esc(it.meta)}</p>
+                    <div class="p-4 flex items-start justify-between gap-3">
+                        <div>
+                            <h4 class="font-bold txt-1 text-base">${esc(it.title)}</h4>
+                            <p class="text-xs txt-3 mt-1 font-mono">${esc(it.meta)}</p>
+                        </div>
+                        ${it.tag ? `<span class="chip font-mono whitespace-nowrap">${esc(it.tag)}</span>` : ""}
                     </div>
                 </div>`).join("");
         })();
